@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Auditoría: {{ template.title }}</h2>
+
+    <form method="POST">
+        <!-- Selección de empresa -->
+        <div class="mb-3">
+            <label for="company_id" class="form-label">Empresa:</label>
+            <select name="company_id" id="company_id" class="form-select" required>
+                {% for c in companies %}
+                    <option value="{{ c.id }}">{{ c.razon_social }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Preguntas del checklist -->
+        {% for q in template.questions.split('\n') %}
+        <div class="mb-3">
+            <label class="form-label">{{ q }}</label>
+            <input type="text" name="{{ q }}" class="form-control" required>
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success">Guardar Auditoría</button>
+        <a href="{{ url_for('audit_template') }}" class="btn btn-secondary">Volver</a>
+    </form>
+</div>
+{% endblock %}

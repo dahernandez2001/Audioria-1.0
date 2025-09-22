@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Documentos</h1>
+
+    <!-- Formulario para subir documento -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Selecciona un archivo:</label>
+                    <input type="file" name="file" id="file" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Subir documento</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Lista de documentos subidos -->
+    <h3>Documentos subidos</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Archivo</th>
+                <th>Subido por</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc, user in documents %}
+            <tr>
+                <td>{{ doc.filename }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ doc.date_uploaded.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    <a href="{{ url_for('download', doc_id=doc.id) }}" class="btn btn-success btn-sm">Descargar</a>
+                    <form action="{{ url_for('delete_document', doc_id=doc.id) }}" method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Enlaces de Drive -->
+    <h3 class="mt-4">Enlaces de Drive</h3>
+    <ul>
+        {% for link in drive_links %}
+            <li><a href="{{ link.url }}" target="_blank">{{ link.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
